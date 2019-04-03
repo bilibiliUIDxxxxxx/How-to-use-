@@ -1,0 +1,85 @@
+#!/usr/bin/env/python
+# -*- coding:utf-8 -*-
+__author__ = 'zcy'
+
+from selenium import webdriver
+import time
+from bs4 import BeautifulSoup
+
+
+class GetBlogs(object):
+
+    def __init__(self):
+        # 火狐浏览器
+        self.driver = webdriver.Firefox()
+        # 打开微博首页
+        self.url = 'https://weibo.com/'
+        # 微博搜索关键词
+        self.keyword = '#两会#'
+
+    def login(self):
+        # 打开微博首页
+        self.driver.get(self.url)
+        time.sleep(15)
+        # 登录与否
+        #############################
+        #############################
+
+    def search(self):
+        # 首页输入框
+        search_box = self.driver.find_element_by_xpath('html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/input')
+        # 输入关键词
+        search_box.send_keys(self.keyword)
+        # 睡眠1s
+        time.sleep(1)
+        # 确认按钮
+        confirm_button = self.driver.find_element_by_xpath('html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/a')
+        # 点击搜索
+        confirm_button.click()
+        # 页面信息
+        page = BeautifulSoup(self.driver.page_source, 'html.parser')
+        self.getBlogs(page)
+
+    def getBlogs(self, page):
+        write_file1 = 'E:\\documents\\1_1.txt'
+        write_file2 = 'E:\\documents\\2_1.txt'
+        write_file3 = 'E:\\documents\\3_1.txt'
+        f1 = open(write_file1, 'a', encoding='utf-8')
+        f2 = open(write_file2, 'a', encoding='utf-8')
+        f3 = open(write_file3, 'a', encoding='utf-8')
+        for i in range(1, 40):
+            # 采集数据——发布者：promulgator，内容：content，出处：provenance
+            promulgators = page.select("a[class='name']")
+            for promulgator in promulgators:
+                f1.write(promulgator.text + '\n')
+                # print(promulgator.text)
+            contents = page.select("p[class='txt']")
+            for content in contents:
+                f2.write(content.text + '\n')
+                # print(content.text)
+            provenances = page.select("p[class='from']")
+            for provenance in provenances:
+                f3.write(provenance.text + '\n')
+                # print(provenance.text)
+            # 采集完点击"下一页"
+            if i == 1:
+                next = self.driver.find_element_by_xpath('html/body/div[1]/div[3]/div[2]/div[1]/div[2]/div/a')
+                next.click()
+            else:
+                next = self.driver.find_element_by_xpath('html/body/div[1]/div[3]/div[2]/div[1]/div[2]/div/a[2]')
+                next.click()
+            page = BeautifulSoup(self.driver.page_source, 'html.parser')
+            # 将字段数据整合
+            # 将整合的数据存入文件中
+
+    def main(self):
+        self.login()
+        self.search()
+
+
+if __name__ == '__main__':
+    crawl1 = time.time()
+    obj = GetBlogs()
+    obj.main()
+    crawl2 = time.time()
+    print("耗时：", int(crawl2 - crawl1))
