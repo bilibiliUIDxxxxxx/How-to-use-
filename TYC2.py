@@ -9,8 +9,8 @@ from selenium import webdriver
 class GetCompanyInfos():
 
     def __init__(self):
-        self.username = '15951667197'
-        self.password = 'zcy19961020aab'
+        self.username = 'xxxxxxxxxxxxx'
+        self.password = 'xxxxxxxxxxxxx'
         self.driver = webdriver.Firefox()
         self.start_url = 'https://www.tianyancha.com/login?' \
                          'from=https%3A%2F%2Fwww.tianyancha.com%' \
@@ -44,7 +44,7 @@ class GetCompanyInfos():
         time.sleep(15)
         # 获取当前页面信息
         page = self.driver.page_source
-        if page.find('艾蕾酱小天使') != -1:
+        if page.find('xxxxxxxxxx') != -1:
             print('登录成功')
 
     # 从文件中读取企业信息
